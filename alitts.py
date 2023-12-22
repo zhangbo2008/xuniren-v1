@@ -20,11 +20,11 @@ from aliyunsdkcore.request import CommonRequest
 
 # 创建AcsClient实例
 client = AcsClient(
-   "LTAI5tNTZy1HGw7nH1Rio1fg",
-   "22ltjZnzTjn6oVFuITDW0z93eIz7k7",
+   "xxxx",
+   "xxxx",
    "cn-shanghai"
 );
-appKey = 'uHcUbL5dRCuGuqvL'
+appKey = 'xxx'
 
 # 创建request，并设置参数。
 request = CommonRequest()
