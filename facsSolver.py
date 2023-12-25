@@ -2,6 +2,7 @@ import numpy as np
 from omni.audio2face.common import log_error, log_info, log_warn
 from scipy.optimize import lsq_linear
 
+
 class FacsSolver:
     def __init__(self, neutral_mat, delta_mat):
         self.weightRegulCoeff = 3.5
@@ -202,5 +203,5 @@ class FacsSolver:
         outWeight[self.activePosesBool] = res.x
 
         outWeight = outWeight * (outWeight > 1.0e-9)
+        # print (outWeight)
         return outWeight
-

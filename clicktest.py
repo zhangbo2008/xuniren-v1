@@ -3,6 +3,7 @@ import pygetwindow as gw
 import time
 
 pyautogui.FAILSAFE = False
+# 需要修改的参数
 relative_x1_rate= 0.974609375 #第二个reset坐标x1比例, 往大调是向右，往小调是向左
 relative_y1_rate= 0.154453125 #第二个reset坐标y1比例, 往大调是向下，往小调是向上
 relative_x2_rate= 0.929609375 #播放按钮坐标x2比例, 往大调是向右，往小调是向左
