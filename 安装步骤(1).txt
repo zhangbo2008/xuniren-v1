@@ -2,6 +2,11 @@
 
 获取阿里云token：https://nls-portal.console.aliyun.com/applist
 
+git clone https://github.com/aliyun/alibabacloud-nls-python-sdk/
+cd alibabacloud-nls-python-sdk/
+
+python -m pip install -r requirements.txt
+
 
 2 ，修改变量变成你们自己的
 
