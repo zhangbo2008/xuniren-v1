@@ -9,7 +9,7 @@ import pygetwindow as gw
 import shutil
 import alitts
 import contextlib
-import wave
+import librosa
 pyautogui.FAILSAFE = False
 
 app = Flask(__name__)
@@ -24,11 +24,13 @@ wav_file = "F:/audio2face-2023.1.1/audio2face-2023.1.1/exts/omni.audio2face.play
 
 # 获取wav时长
 def get_duration(file_path):
-    with contextlib.closing(wave.open(file_path,'r')) as f:
-        frames = f.getnframes()
-        rate = f.getframerate()
-        duration = frames / float(rate)
+    try:
+        y, sr = librosa.load(file_path, sr=None) # sr=None 保持原始采样率
+        duration = librosa.get_duration(y=y, sr=sr)
         return duration
+    except Exception as e:
+        print(f"Error with librosa: {e}")
+        return None
 
 @app.route('/apppost', methods=['POST'])
 def post_example():
