@@ -20,11 +20,11 @@ from aliyunsdkcore.request import CommonRequest
 
 # 创建AcsClient实例
 client = AcsClient(
-   "LTAI5tNTZy1HGw7nH1Rio1fg",
-   "22ltjZnzTjn6oVFuITDW0z93eIz7k7",
+   "LTAI5tNTZyxxxxxx",
+   "22ltjZnzTxxxxxxx",
    "cn-shanghai"
 );
-
+appKey = 'uHcUbL5dRCuGuqvL'
 
 # 创建request，并设置参数。
 request = CommonRequest()
@@ -113,7 +113,6 @@ def processPOSTRequest(appKey, token, text, audioSaveFile, format, sampleRate) :
 
 
 def speakword(wav_file,text):
-    appKey = 'uHcUbL5dRCuGuqvL'
     start_time = time.perf_counter()  # 记录开始时间
     # 采用RFC 3986规范进行urlencode编码。
     textUrlencode = text
