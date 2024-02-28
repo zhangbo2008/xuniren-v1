@@ -53,16 +53,9 @@ async def recognize_microphone():
                 chinese_text = ''.join(re.findall(r'[\u4e00-\u9fff]+', result))
                 if len(chinese_text) >= 3:
                     logging.info(result)
-                    if "小红小红" in str(result):
-                        print("进行打断")
-                        url = "http://127.0.0.1:5000/daduan"
-                        payload = {"message": "你好我是火星一朗"}
-                        headers = {"content-type": "application/json"}
-                        response = requests.request("POST", url, json=payload, headers=headers)
-                    else:
-                        print("发送数据")
-                        client.send_message(str(result),0)
-                        websockets.broadcast(clients, result)
+                    print("发送数据")
+                    client.send_message(str(result),0)
+                    websockets.broadcast(clients, result)
 
 async def main():
 
