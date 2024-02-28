@@ -1,0 +1,4 @@
+.....最后结尾加上
+[python.pipapi]
+requirements=['python-osc']
+use_online_index=true

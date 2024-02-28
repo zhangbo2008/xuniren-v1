@@ -1,4 +1,4 @@
-2# -*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 # Python 2.x引入httplib模块。
 # import httplib
 # Python 3.x引入http.client模块。
@@ -17,14 +17,17 @@ import time
 import json
 from aliyunsdkcore.client import AcsClient
 from aliyunsdkcore.request import CommonRequest
+import configparser
 
+config = configparser.ConfigParser()
+config.read('./secrets.ini')
 # 创建AcsClient实例
 client = AcsClient(
-   "LTAI5tNTZyxxxxxx",
-   "22ltjZnzTxxxxxxx",
-   "cn-shanghai"
+   config.get('aliyun', 'appid'),
+   config.get('aliyun', 'appsecret'),
+   config.get('aliyun', 'appRegion')
 );
-appKey = 'uHcUbL5dRCuGuqvL'
+appKey = config.get('aliyun', 'appKey')
 
 # 创建request，并设置参数。
 request = CommonRequest()

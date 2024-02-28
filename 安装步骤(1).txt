@@ -31,7 +31,26 @@ appKey = 'pAC8NSFL2DjQSWQr'
 
 
 
+1，audio2face安装位置：F:\audio2face\audio2face-2023.1.1\exts\omni.audio2face.exporter\omni\audio2face\exporter\scripts
+   配置文件位置：F:\audio2face\audio2face-2023.1.1\exts\omni.audio2face.exporter\config
+2，UE5项目位置：E:\women001_tes\women001_tes
+3，Python程序的位置：C:\Users\ASUS\Desktop\伟大项目\xuniren-v1
+4，后台a2f程序：F:\audio2face\AudioToLipsyncServer\AudioToLipsyncServer
 
+
+教程步骤：
+
+第一步，配置嘴型服务器
+
+第二步，修改a2f源码
+
+第三步，启动嘴型服务器
+
+第四步，启动python服务
+
+第五步，启动ue5项目
+
+第六步，apipost测试
 
 
 
