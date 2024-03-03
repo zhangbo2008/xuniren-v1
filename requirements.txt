@@ -6,6 +6,6 @@ websockets>=11.0
 python-osc
 requests==2.25.1
 rich==11.2.0
-scipy==1.8.0
+scipy
 sounddevice==0.4.4
 soundfile
