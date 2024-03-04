@@ -9,3 +9,4 @@ rich==11.2.0
 scipy
 sounddevice==0.4.4
 soundfile
+difflib

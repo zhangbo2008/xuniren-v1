@@ -8,6 +8,7 @@ import requests
 import time
 import json
 import configparser
+from difflib import SequenceMatcher
 
 config = configparser.ConfigParser()
 config.read('./secrets.ini')
@@ -18,6 +19,7 @@ usd_file_name = "DefaultOfficialInstance.usd"
 usd_absolute_path = os.path.abspath(usd_file_name)
 a2fserverurl='http://127.0.0.1:10246'
 
+answer_sentence="" # 判断文本相似度
 record_time=0
 startrecord=None
 last_request_time = 0
@@ -51,11 +53,13 @@ def get_duration(file_path):
 def clearstatus():
     global record_time
     global startrecord
+    global answer_sentence
     # 状态初始化
     record_time=0
     startrecord=None
     last_request_time = 0
     wenxin_length=0
+    answer_sentence="" # 判断文本相似度
     data = request.json
     # 接收 JSON 数据
     # F:/audio2face-2023.1.1/exts/omni.audio2face.player_deps/deps/audio2face-data/tracks/
@@ -233,67 +237,74 @@ def wenxin():
     global wenxin_length
     global record_time
     global startrecord
+    global answer_sentence
     startrecord = time.time()  # 记录开始时间
     data = request.json
     data_message = data["message"]
-    
-    if '你是谁' in data_message:
-        output = '我是公司客服机器人佳慧'
-    elif '请介绍下我们公司' in data_message:
-        output = '我们公司是与云计算伴生的一项基于超级计算机系统对外提供计算资源、存储资源等服务的机构或单位，以高性能计算机为基础面向各界提供高性能计算服务。'
-    elif '我还想了解更多' in data_message:
-        output = '我还想了解更多？我们公司致力于为各行各业提供高性能计算服务，利用高性能计算机系统提供计算资源、存储资源等解决方案。我们的目标是通过云计算技术帮助客户实现更快、更强大的计算能力，以推动科学研究、工程设计和商业创新的发展。我们的团队拥有丰富的经验和专业知识，致力于为客户提供可靠、安全、高效的计算服务，以满足不断增长的需求。'
+    # 判断文本相似度
+    similarity_ratio = SequenceMatcher(None, answer_sentence, data_message).ratio()
+    print("文本相似度")
+    print(similarity_ratio)
+    if similarity_ratio >= 0.3:
+        return jsonify({'error': '回声传入，并非问题'}), 400
     else:
-        url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/eb-instant?access_token=" + get_access_token()
-        s=data_message
-        # 注意message必须是奇数条
-        payload = json.dumps({
-        "messages": [
-            {
-                "role": "user",
-                "content": s
+        if '你是谁' in data_message:
+            output = '我是公司客服机器人佳慧'
+        elif '请介绍下我们公司' in data_message:
+            output = '我们公司是与云计算伴生的一项基于超级计算机系统对外提供计算资源、存储资源等服务的机构或单位，以高性能计算机为基础面向各界提供高性能计算服务。'
+        elif '我还想了解更多' in data_message:
+            output = '我还想了解更多？我们公司致力于为各行各业提供高性能计算服务，利用高性能计算机系统提供计算资源、存储资源等解决方案。我们的目标是通过云计算技术帮助客户实现更快、更强大的计算能力，以推动科学研究、工程设计和商业创新的发展。我们的团队拥有丰富的经验和专业知识，致力于为客户提供可靠、安全、高效的计算服务，以满足不断增长的需求。'
+        else:
+            url = "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat/eb-instant?access_token=" + get_access_token()
+            s=data_message
+            # 注意message必须是奇数条
+            payload = json.dumps({
+            "messages": [
+                {
+                    "role": "user",
+                    "content": s
+                }
+            ]
+            })
+            headers = {
+                'Content-Type': 'application/json'
             }
-        ]
-        })
+            res = requests.request("POST", url, headers=headers, data=payload).json()
+            # 根据中文TTS生成wav文件
+            output = res['result']
+        
+        wav_file = wav_name
+        alitts.speakword(wav_file,output)
+
+        # 计算音频总长度，秒
+        total_length = get_duration(wav_file)
+        wenxin_length=total_length
+        audio = AudioSegment.from_file(wav_file)
+        length = len(audio) / 1000 # 获取的长度单位是毫秒，转换为秒钟
+        
+        url = a2fserverurl+'/A2F/Player/SetTrack'
         headers = {
+            'accept': 'application/json',
             'Content-Type': 'application/json'
         }
-        res = requests.request("POST", url, headers=headers, data=payload).json()
-        # 根据中文TTS生成wav文件
-        output = res['result']
-    
-    wav_file = wav_name
-    alitts.speakword(wav_file,output)
-
-    # 计算音频总长度，秒
-    total_length = get_duration(wav_file)
-    wenxin_length=total_length
-    audio = AudioSegment.from_file(wav_file)
-    length = len(audio) / 1000 # 获取的长度单位是毫秒，转换为秒钟
-    
-    url = a2fserverurl+'/A2F/Player/SetTrack'
-    headers = {
-        'accept': 'application/json',
-        'Content-Type': 'application/json'
-    }
-    dat2a = {
-        'a2f_player': '/World/audio2face/Player',
-        'file_name': wav_name,
-        'time_range': [0, -1]
-    }
-    response = requests.post(url, headers=headers, json=dat2a)
-    url = a2fserverurl+'/A2F/Player/Play'
-    headers = {
-        'accept': 'application/json',
-        'Content-Type': 'application/json'
-    }
-    dat2a = {
-        'a2f_player': '/World/audio2face/Player'
-    }
-    response = requests.post(url, headers=headers, json=dat2a)
-    record_time=total_length
-    data["message"]=output
-    return jsonify(data)
+        dat2a = {
+            'a2f_player': '/World/audio2face/Player',
+            'file_name': wav_name,
+            'time_range': [0, -1]
+        }
+        response = requests.post(url, headers=headers, json=dat2a)
+        url = a2fserverurl+'/A2F/Player/Play'
+        headers = {
+            'accept': 'application/json',
+            'Content-Type': 'application/json'
+        }
+        dat2a = {
+            'a2f_player': '/World/audio2face/Player'
+        }
+        response = requests.post(url, headers=headers, json=dat2a)
+        record_time=total_length
+        data["message"]=output
+        return jsonify(data)
 
 
 if __name__ == '__main__':
