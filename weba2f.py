@@ -13,7 +13,7 @@ from difflib import SequenceMatcher
 config = configparser.ConfigParser()
 config.read('./secrets.ini')
 app = Flask(__name__)
-app.secret_key = 'xxxxx'
+app.secret_key = 'daowifhsefighsaofhia' # 这里不用改
 wav_name = "test.wav"
 usd_file_name = "DefaultOfficialInstance.usd"
 usd_absolute_path = os.path.abspath(usd_file_name)
@@ -272,7 +272,7 @@ def wenxin():
             res = requests.request("POST", url, headers=headers, data=payload).json()
             # 根据中文TTS生成wav文件
             output = res['result']
-        
+        answer_sentence=output
         wav_file = wav_name
         alitts.speakword(wav_file,output)
 
